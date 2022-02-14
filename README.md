@@ -3,17 +3,14 @@ Chemically Directed Atom Swap Hopping -- Crystal structure prediction by swappin
 
 Please note that this is not the DASH software for structure solution from powder diffraction data, which is developed by the Cambridge Crystallographic Data Centre and is available at: https://www.ccdc.cam.ac.uk/dash
 
-Acknowledgements
-----------------
-
-We acknowledge funding from the EPSRC Programme Grant: EP/N004884/1 "Integration of Computation and Experiment for Accelerated Materials Discovery"
 
 Introduction
 ============
 
-ChemDASH is a crystal structure prediction code written by Paul Sharp and developed at the
-University of Liverpool. ChemDASH is written in python 3.5+, and depends
-on the atomic simulation environment (ASE), spglib, and their subsequent dependencies. ChemDASH implements
+ChemDASH is a crystal structure prediction code originally written by Paul Sharp (see https://github.com/lrcfmd/ChemDASH)
+and further developed with magnetism and variable compositions
+by Robert Dickson at the University of Liverpool. ChemDASH as currently implemented is written in python 3.8+, and depends
+on the atomic simulation environment (ASE), spglib, and their subsequent dependencies. ChemDASH implements
 the basin hopping method to explore the potential energy surface, with
 atom swaps used to generate new structures. Atoms can be swapped at
 random, or we can use the method of *directed swapping* to rank each
@@ -21,7 +18,9 @@ atom according to its chemical environment, with atoms in the least
 favourable environments prioritised for swapping. Structures in ChemDASH
 can be initialised by populating cation and anion sites on
 initialisation grids, or from a CIF file. Structural optimisation can be
-done using either the GULP or VASP packages.
+done using either the GULP or VASP packages. Variable compositions have been implemented by taking the energy difference
+between two end members and calculating the solid solution energy as the difference between the new structure and the
+end members.
 
 Usage
 =====
@@ -44,9 +43,9 @@ ChemDASH can also be run directly in python after instantiating a ChemDASH class
 
 Running ChemDASH in a python script allows for more complex pre-processing and post-processing of a ChemDASH run. 
 
-The output of the calculation is written to the file “\<basename>.chemdash”.
+The output of the calculation is written to the file “`<basename>`.chemdash”.
 If there are errors in either the “.atoms” or the “.input” files, then the
-calculation is stopped, with errors listed in the file “\<basename>.error”.
+calculation is stopped, with errors listed in the file “`<basename>`.error”.
 To restart a ChemDASH run, with a restart file present, run with
 “restart=True” in the input file.\
 \
@@ -377,8 +376,8 @@ Full List of Input Options
 | cp_stacking_sequence              | Anion layer stacking sequence for close packed grids.                                                                                                                                                                                                                                                                                                                                                                                                            |
 | directed_num_atoms                | For directed swapping, the number of extra atoms available to choose between from the top of the list for each species. Default: 0                                                                                                                                                                                                                                                                                                                               |
 | directed_num_atoms_increment      | For directed swapping, the amount by which to increase (decrease) the number of extra values available to choose between from the top of the list for each species when a structure is (not) repeated. Default: 0                                                                                                                                                                                                                                                |
-| dopable_atoms                     | A list of atoms that may be swapped out in a swap-dope run. Default: None
-| doping_threshold                  | The threshold which defines the probability of a doping step occurring at any given step. Default: 0.1
+| dopable_atoms                     | A list of atoms that may be swapped out in a swap-dope run. Default: None                                                                                                                                                                                                                                                                                                                                                                                        |
+| doping_threshold                  | The threshold which defines the probability of a doping step occurring at any given step. Default: 0.1                                                                                                                                                                                                                                                                                                                                                           |
 | energy_file                       | Energy file for this calculation. Records the structure number, energies and volumes of accepted structures.                                                                                                                                                                                                                                                                                                                                                     |
 | energy_step_file                  | Energy step file for this calculation. Records the structure number, energies and volumes of accepted structures for plotting.                                                                                                                                                                                                                                                                                                                                   |
 | force_vacancy_swaps               | If True, vacancies cannot swap with each other, they must be replaced by atoms. Default: True.                                                                                                                                                                                                                                                                                                                                                                   |
@@ -434,7 +433,7 @@ Full List of Input Options
 | swap_magnetic_moments             | If True, the magnetic moments are swapped while atomic positions of atoms are held constant throughout the ChemDASH run. Default: False                                                                                                                                                                                                                                                                                                                          |
 | temp                              | The Monte-Carlo temperature (strictly, the value of kT in eV). Determines whether swaps to basins of higher energy are accepted. Default: 0.0                                                                                                                                                                                                                                                                                                                    |
 | temp_scale_factor                 | The factor by which we increase the temperature after rejected structures (we decrease by the inverse factor for accepted structures). Default: 1.0                                                                                                                                                                                                                                                                                                              |
-| testing                           | If True, no optimisation calculations are run (by accepting all structures regardless). This is useful for testing of swap groups, doping schemes and magnetic structures without waiting for long optimization times. Default: False 
+| testing                           | If True, no optimisation calculations are run (by accepting all structures regardless). This is useful for testing of swap groups, doping schemes and magnetic structures without waiting for long optimization times. Default: False                                                                                                                                                                                                                            |
 | update_atoms                      | If true, swap atoms based on relaxed structures, rather than initial structures. Default: True.                                                                                                                                                                                                                                                                                                                                                                  |
 | vacancy_exclusion_radius          | The minimum allowable distance between an atom and a vacancy on the vacancy grid. Default: 2.0 A0                                                                                                                                                                                                                                                                                                                                                                |
 | vacancy_grid                      | If true, apply vacancy grids to each structure in which we will swap atoms. Default: True.                                                                                                                                                                                                                                                                                                                                                                       |
@@ -458,12 +457,11 @@ Notes on Magnetism
 ChemDASH in its original form has no implementation for considering magnetic systems. In this magnetic development version a few different considerations of magnetism
 are implemented by the following keywords
 
-| ChemDASH Input file option        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-| initial_mag_moments               | Specifies the initial magnetic moments for VASP calculations. Can be specified as a python list or in the VASP comma-separated form. Default: None
-| keep_mag_structure_constant       | If True, magnetic moments are fixed to their initial site positions as atoms are swapped. Default: False
-| swap_magnetic_moments             | If True, atomic positions are fixed and magnetic moments are swapped. Default: False
-
+| ChemDASH Input file option  | Description                                                                                                                                        |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| initial_mag_moments         | Specifies the initial magnetic moments for VASP calculations. Can be specified as a python list or in the VASP comma-separated form. Default: None |
+| keep_mag_structure_constant | If True, magnetic moments are fixed to their initial site positions as atoms are swapped. Default: False                                           |
+| swap_magnetic_moments       | If True, atomic positions are fixed and magnetic moments are swapped. Default: False                                                               |
 
 By default, the magnetic moments are set to the atoms in the initial structure, and the moments follow the atoms as they are swapped.
 using keep_mag_structure_constant fixes the magnetic moments to the original crystal site. Using swap_magnetic_moments allows
@@ -481,13 +479,12 @@ octahedral and tetrahedral sites depending on the composition of the spinel stru
 given step, the idea is that the phase space of these structures can be explored more efficiently than by running separate runs
 at different compositions.
 
-| ChemDASH Input file option        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-| dopable_atoms                     | A list of species that are available for doping in the solid solution routine
-| doping_threshold                  | The threshold which defines the time averaged proportion of dopes over swaps. Default: 0.1
-| random_dopant_atoms               | A pool of dopants to be randomly doped into the structure at random sites within the constraints of `dopable_atoms`
-| solid_solution_end_members        | Entries of end members of the solid solution in the form species: energy
-
+| ChemDASH Input file option | Description                                                                                                         |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------|
+| dopable_atoms              | A list of species that are available for doping in the solid solution routine                                       |
+| doping_threshold           | The threshold which defines the time averaged proportion of dopes over swaps. Default: 0.1                          |
+| random_dopant_atoms        | A pool of dopants to be randomly doped into the structure at random sites within the constraints of `dopable_atoms` |
+| solid_solution_end_members | Entries of end members of the solid solution in the form species: energy                                            |
 
 The implementation here is defined by four main parameters: dopable_atoms, doping_threshold, random_dopant_atoms and the solid_solution_end_members.
 A doping pool of random_dopant_atoms is specified as a list of length n of all possible atoms that can be doped in to the structure.
