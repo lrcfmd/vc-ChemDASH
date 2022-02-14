@@ -8,14 +8,15 @@ import subprocess
 
 os.environ["GULP_LIB"] = ""
 
-#===========================================================================================================================================================
-#===========================================================================================================================================================
-#Fixtures
+# ===========================================================================================================================================================
+# ===========================================================================================================================================================
+# Fixtures
+
 
 @pytest.fixture
-def rng(scope = "session"):
+def rng(scope="session"):
     """
-    This fixture returns a randomly-seeded random number generator. 
+    This fixture returns a randomly-seeded random number generator.
 
     Parameters
     ----------
@@ -36,11 +37,11 @@ def rng(scope = "session"):
     return chemdash.rngs.NR_Ran(random_seed)
 
 
-#===========================================================================================================================================================
+# ===========================================================================================================================================================
 @pytest.fixture
 def STOX_structure(scope="session"):
     """
-    This fixture returns an ASE atoms object containing a formula unit of SrTiO_{3} and five vacancies ("X"). 
+    This fixture returns an ASE atoms object containing a formula unit of SrTiO_{3} and five vacancies ("X").
 
     Parameters
     ----------
@@ -58,17 +59,31 @@ def STOX_structure(scope="session"):
     Paul Sharp 07/07/2017
     """
 
-    return ase.Atoms(symbols="SrTiO3X5", cell = [2.0, 2.0, 2.0], charges=[2.0, 4.0, -2.0, -2.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                     scaled_positions=([0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5],
-                                       [0.0, 0.0, 0.0], [0.25, 0.25, 0.25], [0.75, 0.75, 0.75], [0.0, 0.5, 0.0], [0.25, 0.25, 0.75]),
-                     pbc=[True, True, True])
+    return ase.Atoms(
+        symbols="SrTiO3X5",
+        cell=[2.0, 2.0, 2.0],
+        charges=[2.0, 4.0, -2.0, -2.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        scaled_positions=(
+            [0.75, 0.75, 0.25],
+            [0.75, 0.25, 0.25],
+            [0.5, 0.5, 0.5],
+            [0.5, 0.0, 0.0],
+            [0.0, 0.0, 0.5],
+            [0.0, 0.0, 0.0],
+            [0.25, 0.25, 0.25],
+            [0.75, 0.75, 0.75],
+            [0.0, 0.5, 0.0],
+            [0.25, 0.25, 0.75],
+        ),
+        pbc=[True, True, True],
+    )
 
 
-#===========================================================================================================================================================
+# ===========================================================================================================================================================
 @pytest.fixture
-def STO_atoms(scope = "session"):
+def STO_atoms(scope="session"):
     """
-    This fixture returns an ASE atoms object containing a formula unit of SrTiO_{3}. 
+    This fixture returns an ASE atoms object containing a formula unit of SrTiO_{3}.
 
     Parameters
     ----------
@@ -86,6 +101,16 @@ def STO_atoms(scope = "session"):
     Paul Sharp 11/09/2017
     """
 
-    return ase.Atoms(symbols = "SrTiO3", cell = [2.0, 2.0, 2.0], charges = [2.0, 4.0, -2.0, -2.0, -2.0],
-                     scaled_positions = ([0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5]),
-                     pbc=[True, True, True])
+    return ase.Atoms(
+        symbols="SrTiO3",
+        cell=[2.0, 2.0, 2.0],
+        charges=[2.0, 4.0, -2.0, -2.0, -2.0],
+        scaled_positions=(
+            [0.75, 0.75, 0.25],
+            [0.75, 0.25, 0.25],
+            [0.5, 0.5, 0.5],
+            [0.5, 0.0, 0.0],
+            [0.0, 0.0, 0.5],
+        ),
+        pbc=[True, True, True],
+    )

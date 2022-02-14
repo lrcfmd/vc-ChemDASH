@@ -34,7 +34,7 @@ import subprocess
 @pytest.fixture
 def STOX_structure(scope="module"):
     """
-    This fixture returns an ASE atoms object containing a formula unit of SrTiO_{3} and five vacancies ("X"). 
+    This fixture returns an ASE atoms object containing a formula unit of SrTiO_{3} and five vacancies ("X").
 
     Parameters
     ----------
@@ -53,20 +53,32 @@ def STOX_structure(scope="module"):
     """
 
     return chemdash.master_code.Structure(
-        atoms=ase.Atoms(symbols="SrTiO3X5", charges=[2.0, 4.0, -2.0, -2.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                  cell=[1.0, 1.0, 1.0],
-                  scaled_positions=(
-                      [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5],
-                      [0.0, 0.0, 0.0],
-                      [0.25, 0.25, 0.25], [0.75, 0.75, 0.75], [0.0, 0.5, 0.0], [0.25, 0.25, 0.75]),
-                  pbc=[True, True, True]))
+        atoms=ase.Atoms(
+            symbols="SrTiO3X5",
+            charges=[2.0, 4.0, -2.0, -2.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            cell=[1.0, 1.0, 1.0],
+            scaled_positions=(
+                [0.75, 0.75, 0.25],
+                [0.75, 0.25, 0.25],
+                [0.5, 0.5, 0.5],
+                [0.5, 0.0, 0.0],
+                [0.0, 0.0, 0.5],
+                [0.0, 0.0, 0.0],
+                [0.25, 0.25, 0.25],
+                [0.75, 0.75, 0.75],
+                [0.0, 0.5, 0.0],
+                [0.25, 0.25, 0.75],
+            ),
+            pbc=[True, True, True],
+        )
+    )
 
 
 # ===========================================================================================================================================================
 @pytest.fixture
 def STO_atoms(scope="module"):
     """
-    This fixture returns an ASE atoms object containing a formula unit of SrTiO_{3}. 
+    This fixture returns an ASE atoms object containing a formula unit of SrTiO_{3}.
 
     Parameters
     ----------
@@ -84,10 +96,21 @@ def STO_atoms(scope="module"):
     Paul Sharp 11/09/2017
     """
 
-    return chemdash.master_code.Structure(ase.Atoms(symbols="SrTiO3", charges=[2.0, 4.0, -2.0, -2.0, -2.0], cell=[1.0, 1.0, 1.0],
-                     scaled_positions=(
-                         [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5]),
-                     pbc=[True, True, True]))
+    return chemdash.master_code.Structure(
+        ase.Atoms(
+            symbols="SrTiO3",
+            charges=[2.0, 4.0, -2.0, -2.0, -2.0],
+            cell=[1.0, 1.0, 1.0],
+            scaled_positions=(
+                [0.75, 0.75, 0.25],
+                [0.75, 0.25, 0.25],
+                [0.5, 0.5, 0.5],
+                [0.5, 0.0, 0.0],
+                [0.0, 0.0, 0.5],
+            ),
+            pbc=[True, True, True],
+        )
+    )
 
 
 # ===========================================================================================================================================================
@@ -95,11 +118,20 @@ def STO_atoms(scope="module"):
 # Unit tests
 
 
-@pytest.mark.parametrize("selection, reduced_structure, expected_output", [
-    ("atoms", STO_atoms, (["Sr", "Ti", "O", "O", "O"], 4)),
-])
-def test_determine_maximum_swaps_1(STOX_structure, selection, reduced_structure, expected_output, monkeypatch,
-                                   STO_atoms):
+@pytest.mark.parametrize(
+    "selection, reduced_structure, expected_output",
+    [
+        ("atoms", STO_atoms, (["Sr", "Ti", "O", "O", "O"], 4)),
+    ],
+)
+def test_determine_maximum_swaps_1(
+    STOX_structure,
+    selection,
+    reduced_structure,
+    expected_output,
+    monkeypatch,
+    STO_atoms,
+):
     """
     GIVEN a structure and group of atoms to be involved in a swap
 
@@ -125,16 +157,32 @@ def test_determine_maximum_swaps_1(STOX_structure, selection, reduced_structure,
     Paul Sharp 27/06/2019
     """
 
-    monkeypatch.setattr(chemdash.swap, 'reduce_structure', lambda x, y: STO_atoms)
-    assert chemdash.swap.determine_maximum_swaps(STOX_structure, selection) == expected_output
+    monkeypatch.setattr(chemdash.swap, "reduce_structure", lambda x, y: STO_atoms)
+    assert (
+        chemdash.swap.determine_maximum_swaps(STOX_structure, selection)
+        == expected_output
+    )
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("selection, reduced_structure, expected_output", [
-    ("atoms-vacancies", STOX_structure, (["A", "A", "A", "A", "A", "X", "X", "X", "X", "X"], 10)),
-])
-def test_determine_maximum_swaps_2(STOX_structure, selection, reduced_structure, expected_output, monkeypatch,
-                                   STO_atoms):
+@pytest.mark.parametrize(
+    "selection, reduced_structure, expected_output",
+    [
+        (
+            "atoms-vacancies",
+            STOX_structure,
+            (["A", "A", "A", "A", "A", "X", "X", "X", "X", "X"], 10),
+        ),
+    ],
+)
+def test_determine_maximum_swaps_2(
+    STOX_structure,
+    selection,
+    reduced_structure,
+    expected_output,
+    monkeypatch,
+    STO_atoms,
+):
     """
     GIVEN a structure and group of atoms to be involved in a swap
 
@@ -160,16 +208,22 @@ def test_determine_maximum_swaps_2(STOX_structure, selection, reduced_structure,
     Paul Sharp 27/06/2019
     """
 
-    monkeypatch.setattr(chemdash.swap, 'reduce_structure', lambda x, y: STOX_structure)
-    assert chemdash.swap.determine_maximum_swaps(STOX_structure, selection) == expected_output
+    monkeypatch.setattr(chemdash.swap, "reduce_structure", lambda x, y: STOX_structure)
+    assert (
+        chemdash.swap.determine_maximum_swaps(STOX_structure, selection)
+        == expected_output
+    )
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_atoms, expected_output", [
-    (1, [1.0]),
-    (2, [2.0, 1.0]),
-    (4, [4.0, 3.0, 2.0, 1.0]),
-])
+@pytest.mark.parametrize(
+    "max_atoms, expected_output",
+    [
+        (1, [1.0]),
+        (2, [2.0, 1.0]),
+        (4, [4.0, 3.0, 2.0, 1.0]),
+    ],
+)
 def test_generate_linearly_decreasing_weightings(max_atoms, expected_output):
     """
     GIVEN the maximum number of atoms that can be swapped
@@ -196,10 +250,13 @@ def test_generate_linearly_decreasing_weightings(max_atoms, expected_output):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_atoms", [
-    (0),
-    (-5),
-])
+@pytest.mark.parametrize(
+    "max_atoms",
+    [
+        (0),
+        (-5),
+    ],
+)
 def test_generate_linearly_decreasing_weightings_exceptions(max_atoms):
     """
     GIVEN an invalid maximum number of atoms that can be swapped
@@ -223,11 +280,14 @@ def test_generate_linearly_decreasing_weightings_exceptions(max_atoms):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_atoms, expected_output", [
-    (1, [1.0]),
-    (2, [2.0, 1.0]),
-    (4, [8.0, 4.0, 2.0, 1.0]),
-])
+@pytest.mark.parametrize(
+    "max_atoms, expected_output",
+    [
+        (1, [1.0]),
+        (2, [2.0, 1.0]),
+        (4, [8.0, 4.0, 2.0, 1.0]),
+    ],
+)
 def test_generate_geometrically_decreasing_weightings(max_atoms, expected_output):
     """
     GIVEN the maximum number of atoms that can be swapped
@@ -247,17 +307,22 @@ def test_generate_geometrically_decreasing_weightings(max_atoms, expected_output
     Paul Sharp 09/08/2018
     """
 
-    probabilities = chemdash.swap.generate_geometrically_decreasing_weightings(max_atoms)
+    probabilities = chemdash.swap.generate_geometrically_decreasing_weightings(
+        max_atoms
+    )
 
     assert len(probabilities) == max_atoms
     assert probabilities == expected_output
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_atoms", [
-    (0),
-    (-5),
-])
+@pytest.mark.parametrize(
+    "max_atoms",
+    [
+        (0),
+        (-5),
+    ],
+)
 def test_generate_geometrically_decreasing_weightings_exceptions(max_atoms):
     """
     GIVEN an invalid maximum number of atoms that can be swapped
@@ -281,14 +346,17 @@ def test_generate_geometrically_decreasing_weightings_exceptions(max_atoms):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_atoms, pair_weighting, expected_output", [
-    (1, 1, [1.0]),
-    (2, 1, [1.0, 1.0]),
-    (4, 1, [6.0, 3.0, 2.0, 1.0]),
-    (1, 3, [1.0]),
-    (2, 3, [3.0, 1.0]),
-    (4, 3, [18.0, 3.0, 2.0, 1.0]),
-])
+@pytest.mark.parametrize(
+    "max_atoms, pair_weighting, expected_output",
+    [
+        (1, 1, [1.0]),
+        (2, 1, [1.0, 1.0]),
+        (4, 1, [6.0, 3.0, 2.0, 1.0]),
+        (1, 3, [1.0]),
+        (2, 3, [3.0, 1.0]),
+        (4, 3, [18.0, 3.0, 2.0, 1.0]),
+    ],
+)
 def test_pair_pinned_weightings(max_atoms, pair_weighting, expected_output):
     """
     GIVEN the maximum number of atoms that can be swapped
@@ -315,10 +383,13 @@ def test_pair_pinned_weightings(max_atoms, pair_weighting, expected_output):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_atoms, pair_weighting", [
-    (0, 1),
-    (-5, 1),
-])
+@pytest.mark.parametrize(
+    "max_atoms, pair_weighting",
+    [
+        (0, 1),
+        (-5, 1),
+    ],
+)
 def test_pair_pinned_weightings_exceptions(max_atoms, pair_weighting):
     """
     GIVEN an invalid maximum number of atoms that can be swapped
@@ -342,11 +413,14 @@ def test_pair_pinned_weightings_exceptions(max_atoms, pair_weighting):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_atoms, expected_output", [
-    (1, [1.0]),
-    (2, [1.0, 1.0]),
-    (4, [1.0, 1.0, 1.0, 1.0]),
-])
+@pytest.mark.parametrize(
+    "max_atoms, expected_output",
+    [
+        (1, [1.0]),
+        (2, [1.0, 1.0]),
+        (4, [1.0, 1.0, 1.0, 1.0]),
+    ],
+)
 def test_generate_uniform_weightings(max_atoms, expected_output):
     """
     GIVEN the maximum number of atoms that can be swapped
@@ -373,10 +447,13 @@ def test_generate_uniform_weightings(max_atoms, expected_output):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_atoms", [
-    (0),
-    (-5),
-])
+@pytest.mark.parametrize(
+    "max_atoms",
+    [
+        (0),
+        (-5),
+    ],
+)
 def test_generate_uniform_weightings_exceptions(max_atoms):
     """
     GIVEN an invalid maximum number of atoms that can be swapped
@@ -400,14 +477,36 @@ def test_generate_uniform_weightings_exceptions(max_atoms):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("elements_list, num_swaps, expected_output", [
-    (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], 2, (["O", "Sr", "Ti", "X"], 2)),
-    (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], 5, (["O", "O", "Sr", "Ti", "X", "X"], 5)),
-    (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], 10,
-     (["O", "O", "O", "Sr", "Ti", "X", "X", "X", "X", "X"], 10)),
-    (["Sr", "Sr", "Ti", "Ti"], 3, (["Sr", "Ti"], 2)),
-    (["O", "O", "O", ], 2, (["O"], 1)),
-])
+@pytest.mark.parametrize(
+    "elements_list, num_swaps, expected_output",
+    [
+        (
+            ["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"],
+            2,
+            (["O", "Sr", "Ti", "X"], 2),
+        ),
+        (
+            ["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"],
+            5,
+            (["O", "O", "Sr", "Ti", "X", "X"], 5),
+        ),
+        (
+            ["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"],
+            10,
+            (["O", "O", "O", "Sr", "Ti", "X", "X", "X", "X", "X"], 10),
+        ),
+        (["Sr", "Sr", "Ti", "Ti"], 3, (["Sr", "Ti"], 2)),
+        (
+            [
+                "O",
+                "O",
+                "O",
+            ],
+            2,
+            (["O"], 1),
+        ),
+    ],
+)
 def test_generate_selection_pool(elements_list, num_swaps, expected_output):
     """
     GIVEN a list of elements and number of atoms we intend to swap
@@ -415,7 +514,7 @@ def test_generate_selection_pool(elements_list, num_swaps, expected_output):
     WHEN generating the list of atoms we will choose from
 
     THEN we get a valid selection pool and the number of atoms we will swap -- choosing this many atoms from the selection pool WILL result in a non-trivial swap.
- 
+
 
     Parameters
     ----------
@@ -430,18 +529,23 @@ def test_generate_selection_pool(elements_list, num_swaps, expected_output):
     Paul Sharp 25/06/2019
     """
 
-    selection_pool, num_swaps = chemdash.swap.generate_selection_pool(elements_list, num_swaps)
+    selection_pool, num_swaps = chemdash.swap.generate_selection_pool(
+        elements_list, num_swaps
+    )
 
     assert len(selection_pool) >= num_swaps
     assert (sorted(selection_pool), num_swaps) == expected_output
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("elements_list, num_swaps", [
-    (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], 0),
-    (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], 1),
-    (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], -5),
-])
+@pytest.mark.parametrize(
+    "elements_list, num_swaps",
+    [
+        (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], 0),
+        (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], 1),
+        (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], -5),
+    ],
+)
 def test_generate_selection_pool_exceptions(elements_list, num_swaps):
     """
     GIVEN a list of elements and an invalid number of atoms we intend to swap
@@ -463,17 +567,24 @@ def test_generate_selection_pool_exceptions(elements_list, num_swaps):
     """
 
     with pytest.raises(AssertionError):
-        selection_pool, num_swaps = chemdash.swap.generate_selection_pool(elements_list, num_swaps)
+        selection_pool, num_swaps = chemdash.swap.generate_selection_pool(
+            elements_list, num_swaps
+        )
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("selection_pool, num_swaps, expected_output", [
-    (["a", "b", "c", "d", "e"], 2, ["a", "b"]),
-    (["a", "b", "c", "d", "e"], 5, ["a", "b", "c", "d", "e"]),
-    (["a", "b", "c", "d", "e"], 0, []),
-    (["a", "b", "c", "d", "e"], -1, []),
-])
-def test_generate_swap_list(selection_pool, num_swaps, rng, expected_output, monkeypatch):
+@pytest.mark.parametrize(
+    "selection_pool, num_swaps, expected_output",
+    [
+        (["a", "b", "c", "d", "e"], 2, ["a", "b"]),
+        (["a", "b", "c", "d", "e"], 5, ["a", "b", "c", "d", "e"]),
+        (["a", "b", "c", "d", "e"], 0, []),
+        (["a", "b", "c", "d", "e"], -1, []),
+    ],
+)
+def test_generate_swap_list(
+    selection_pool, num_swaps, rng, expected_output, monkeypatch
+):
     """
     GIVEN a selection pool and a number of atoms we intend to swap
 
@@ -499,17 +610,33 @@ def test_generate_swap_list(selection_pool, num_swaps, rng, expected_output, mon
 
     # NEED TO CONSIDER HOW TO PATCH THE RNG
 
-    monkeypatch.setattr(rng, 'int_range', lambda u_lim: 0)
-    assert chemdash.swap.generate_swap_list(selection_pool, num_swaps, rng) == expected_output
+    monkeypatch.setattr(rng, "int_range", lambda u_lim: 0)
+    assert (
+        chemdash.swap.generate_swap_list(selection_pool, num_swaps, rng)
+        == expected_output
+    )
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("old_order, force_vacancy_swaps", [
-    (np.asarray(["Sr", "Sr", "Ti", "Ti", "O", "O", "X", "X"]), False),
-    (np.asarray(["Sr", "Sr", "Ti", "Ti", "O", "O", "X", "X"]), True),
-    (np.asarray(["Sr", "Sr", "Ti", "Ti", "O", "O", "X", "X", "X", "X", "X", "X"]), False),
-    (np.asarray(["Sr", "Sr", "Ti", "Ti", "O", "O", "X", "X", "X", "X", "X", "X"]), True),
-])
+@pytest.mark.parametrize(
+    "old_order, force_vacancy_swaps",
+    [
+        (np.asarray(["Sr", "Sr", "Ti", "Ti", "O", "O", "X", "X"]), False),
+        (np.asarray(["Sr", "Sr", "Ti", "Ti", "O", "O", "X", "X"]), True),
+        (
+            np.asarray(
+                ["Sr", "Sr", "Ti", "Ti", "O", "O", "X", "X", "X", "X", "X", "X"]
+            ),
+            False,
+        ),
+        (
+            np.asarray(
+                ["Sr", "Sr", "Ti", "Ti", "O", "O", "X", "X", "X", "X", "X", "X"]
+            ),
+            True,
+        ),
+    ],
+)
 def test_permute_atoms(old_order, force_vacancy_swaps, rng):
     """
     The "permute_atoms()" routine should change the reorder a list such that each element is different.
@@ -521,7 +648,7 @@ def test_permute_atoms(old_order, force_vacancy_swaps, rng):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 06/07/2017
@@ -536,12 +663,15 @@ def test_permute_atoms(old_order, force_vacancy_swaps, rng):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("energy_difference, temperature, expected_output", [
-    (-1, 0.0, True),
-    (1, 0.0, False),
-    (0, 0.0, False),
-    ("****", 0.0, False),
-])
+@pytest.mark.parametrize(
+    "energy_difference, temperature, expected_output",
+    [
+        (-1, 0.0, True),
+        (1, 0.0, False),
+        (0, 0.0, False),
+        ("****", 0.0, False),
+    ],
+)
 def test_accept_swap(energy_difference, temperature, rng, expected_output):
     """
     The "accept_swap()" routine should accept all swaps where new_energy < current_energy, and acceptance of higher energy swaps depends on the temperature.
@@ -553,29 +683,35 @@ def test_accept_swap(energy_difference, temperature, rng, expected_output):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 06/07/2017
     """
 
-    assert chemdash.swap.accept_swap(energy_difference, temperature, rng) == expected_output
+    assert (
+        chemdash.swap.accept_swap(energy_difference, temperature, rng)
+        == expected_output
+    )
 
 
 # LOTS OF TEST CASES NEEDED HERE - HOW TO DO FINITE T? -- NEEDED FOR COVERAGE
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("atom_filter, expected_output", [
-    ("cations", "SrTi"),
-    ("anions", "O3"),
-    ("atoms", "O3SrTi"),
-    ("vacancies", "X5"),
-    ("all", "O3SrTiX5"),
-    ("atoms-vacancies", "O3SrTiX5"),
-    ("Sr-X", "SrX5"),
-    ("O-Ti", "O3Ti"),
-])
+@pytest.mark.parametrize(
+    "atom_filter, expected_output",
+    [
+        ("cations", "SrTi"),
+        ("anions", "O3"),
+        ("atoms", "O3SrTi"),
+        ("vacancies", "X5"),
+        ("all", "O3SrTiX5"),
+        ("atoms-vacancies", "O3SrTiX5"),
+        ("Sr-X", "SrX5"),
+        ("O-Ti", "O3Ti"),
+    ],
+)
 def test_reduce_structure(STOX_structure, atom_filter, expected_output):
     """
     The "reduce_structure()" routine should remove all atoms that do not fit the specified atom filter.
@@ -587,7 +723,7 @@ def test_reduce_structure(STOX_structure, atom_filter, expected_output):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 06/07/2017
@@ -602,11 +738,14 @@ def test_reduce_structure(STOX_structure, atom_filter, expected_output):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("basins, new_energy, expected_output", [
-    ({}, 1.0, {1.0: 1}),
-    ({1.0: 2, 2.0: 1}, 3.0, {1.0: 2, 2.0: 1, 3.0: 1}),
-    ({1.0: 2, 2.0: 1}, 1.0, {1.0: 3, 2.0: 1}),
-])
+@pytest.mark.parametrize(
+    "basins, new_energy, expected_output",
+    [
+        ({}, 1.0, {1.0: 1}),
+        ({1.0: 2, 2.0: 1}, 3.0, {1.0: 2, 2.0: 1, 3.0: 1}),
+        ({1.0: 2, 2.0: 1}, 1.0, {1.0: 3, 2.0: 1}),
+    ],
+)
 def test_update_basins(basins, new_energy, expected_output):
     """
     The "update_basins()" routine should increment the visit count for visited basins and add new basins to the list.
@@ -618,7 +757,7 @@ def test_update_basins(basins, new_energy, expected_output):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 07/07/2017
@@ -628,11 +767,17 @@ def test_update_basins(basins, new_energy, expected_output):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("swap_groups, expected_output", [
-    ([["cations"], ["anions"], ["atoms"], ["all"]], [["cations"], ["atoms"], ["all"]]),
-    ([["cations"], ["atoms"], ["all"]], [["cations"], ["atoms"], ["all"]]),
-    ([["anions"]], []),
-])
+@pytest.mark.parametrize(
+    "swap_groups, expected_output",
+    [
+        (
+            [["cations"], ["anions"], ["atoms"], ["all"]],
+            [["cations"], ["atoms"], ["all"]],
+        ),
+        ([["cations"], ["atoms"], ["all"]], [["cations"], ["atoms"], ["all"]]),
+        ([["anions"]], []),
+    ],
+)
 def test_initialise_default_swap_groups(STOX_structure, swap_groups, expected_output):
     """
     GIVEN a structure and a set of swap groups
@@ -647,25 +792,36 @@ def test_initialise_default_swap_groups(STOX_structure, swap_groups, expected_ou
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 25/10/2017
     """
 
-    assert chemdash.swap.initialise_default_swap_groups(STOX_structure, swap_groups) == expected_output
+    assert (
+        chemdash.swap.initialise_default_swap_groups(STOX_structure, swap_groups)
+        == expected_output
+    )
 
 
 # Need to test for a problem when input is not atoms object
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("swap_groups, expected_output", [
-    ([["cations"], ["anions"], ["atoms"], ["all"]], [["cations", 1.0], ["anions", 1.0], ["atoms", 1.0], ["all", 1.0]]),
-    ([["Sr-X"], ["Ti-X"], ["O-X"]], [["Sr-X", 1.0], ["Ti-X", 1.0], ["O-X", 1.0]]),
-    ([], []),
-])
-def test_initialise_default_swap_weightings(STOX_structure, swap_groups, expected_output):
+@pytest.mark.parametrize(
+    "swap_groups, expected_output",
+    [
+        (
+            [["cations"], ["anions"], ["atoms"], ["all"]],
+            [["cations", 1.0], ["anions", 1.0], ["atoms", 1.0], ["all", 1.0]],
+        ),
+        ([["Sr-X"], ["Ti-X"], ["O-X"]], [["Sr-X", 1.0], ["Ti-X", 1.0], ["O-X", 1.0]]),
+        ([], []),
+    ],
+)
+def test_initialise_default_swap_weightings(
+    STOX_structure, swap_groups, expected_output
+):
     """
     GIVEN a set of swap groups
 
@@ -679,23 +835,42 @@ def test_initialise_default_swap_weightings(STOX_structure, swap_groups, expecte
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 25/10/2017
     """
 
-    assert chemdash.swap.initialise_default_swap_weightings(swap_groups) == expected_output
+    assert (
+        chemdash.swap.initialise_default_swap_weightings(swap_groups) == expected_output
+    )
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("swap_groups, expected_output", [
-    ([["cations"], ["atoms"], ["all"]], ([["cations"], ["atoms"], ["all"]], [], [])),
-    ([["cations"], ["atoms"], ["all"], ["atoms-vacancies"]], ([["cations"], ["atoms"], ["all"], ["atoms-vacancies"]], [], [])),
-    ([["cations"], ["anions"], ["atoms"], ["all"]], ([["cations"], ["atoms"], ["all"]], [], [
-        '"anions" has been specified as a swap group, but there are insufficient different species to enable non-trivial swaps to be made -- there are 1 species of anions.'])),
-    ([], ([], [], ['There are no valid swap groups.'])),
-])
+@pytest.mark.parametrize(
+    "swap_groups, expected_output",
+    [
+        (
+            [["cations"], ["atoms"], ["all"]],
+            ([["cations"], ["atoms"], ["all"]], [], []),
+        ),
+        (
+            [["cations"], ["atoms"], ["all"], ["atoms-vacancies"]],
+            ([["cations"], ["atoms"], ["all"], ["atoms-vacancies"]], [], []),
+        ),
+        (
+            [["cations"], ["anions"], ["atoms"], ["all"]],
+            (
+                [["cations"], ["atoms"], ["all"]],
+                [],
+                [
+                    '"anions" has been specified as a swap group, but there are insufficient different species to enable non-trivial swaps to be made -- there are 1 species of anions.'
+                ],
+            ),
+        ),
+        ([], ([], [], ["There are no valid swap groups."])),
+    ],
+)
 def test_verify_swap_groups(STOX_structure, swap_groups, expected_output):
     """
     The "verify_swap_groups()" routine should report an error for any swap groups that do not enable non-trivial swaps for a particular structure.
@@ -707,26 +882,37 @@ def test_verify_swap_groups(STOX_structure, swap_groups, expected_output):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 25/06/2019
     """
 
-    assert chemdash.swap.verify_swap_groups(STOX_structure, swap_groups) == expected_output
+    assert (
+        chemdash.swap.verify_swap_groups(STOX_structure, swap_groups) == expected_output
+    )
 
 
 # Need to test for a problem when input is not atoms object
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("swap_groups, expected_output", [
-    ([["cations"], ["atoms"], ["all"]], []),
-    ([["cations"], ["Sr-X"]], []),
-    ([["cations"], ["Fe-Sr-X"]],
-     ['"Fe-Sr-X" has been specified as a swap group, but there are no Fe atoms in the structure.']),
-])
-def test_check_elements_in_custom_swap_groups(STOX_structure, swap_groups, expected_output):
+@pytest.mark.parametrize(
+    "swap_groups, expected_output",
+    [
+        ([["cations"], ["atoms"], ["all"]], []),
+        ([["cations"], ["Sr-X"]], []),
+        (
+            [["cations"], ["Fe-Sr-X"]],
+            [
+                '"Fe-Sr-X" has been specified as a swap group, but there are no Fe atoms in the structure.'
+            ],
+        ),
+    ],
+)
+def test_check_elements_in_custom_swap_groups(
+    STOX_structure, swap_groups, expected_output
+):
     """
     The "check_elements_in_custom_swap_groups()" routine should check that the elements given in custom swap groups exist in the structure.
 
@@ -737,15 +923,18 @@ def test_check_elements_in_custom_swap_groups(STOX_structure, swap_groups, expec
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 07/07/2017
     """
 
-    assert chemdash.swap.check_elements_in_custom_swap_groups(swap_groups,
-                                                              STOX_structure.atoms.get_chemical_symbols(),
-                                                              doping_atoms=[]) == expected_output
+    assert (
+        chemdash.swap.check_elements_in_custom_swap_groups(
+            swap_groups, STOX_structure.atoms.get_chemical_symbols(), doping_atoms=[]
+        )
+        == expected_output
+    )
 
 
 # ===========================================================================================================================================================
@@ -754,20 +943,23 @@ def test_check_elements_in_custom_swap_groups(STOX_structure, swap_groups, expec
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_swaps, weightings", [
-    (2, "arithmetic"),
-    (5, "arithmetic"),
-    (100, "arithmetic"),
-    (2, "geometric"),
-    (5, "geometric"),
-    (100, "geometric"),
-    (2, "pinned_pair"),
-    (5, "pinned_pair"),
-    (100, "pinned_pair"),
-    (2, "uniform"),
-    (5, "uniform"),
-    (100, "uniform"),
-])
+@pytest.mark.parametrize(
+    "max_swaps, weightings",
+    [
+        (2, "arithmetic"),
+        (5, "arithmetic"),
+        (100, "arithmetic"),
+        (2, "geometric"),
+        (5, "geometric"),
+        (100, "geometric"),
+        (2, "pinned_pair"),
+        (5, "pinned_pair"),
+        (100, "pinned_pair"),
+        (2, "uniform"),
+        (5, "uniform"),
+        (100, "uniform"),
+    ],
+)
 def test_choose_number_of_atoms_to_swap(max_swaps, weightings, rng):
     """
     The "choose_number_of_atoms_to_swap()" routine should choose a number of atoms to swap between 2 and the maximum possible.
@@ -779,21 +971,28 @@ def test_choose_number_of_atoms_to_swap(max_swaps, weightings, rng):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 09/08/2018
     """
 
-    assert 2 <= chemdash.swap.choose_number_of_atoms_to_swap(max_swaps, weightings, rng, 1) <= max_swaps
+    assert (
+        2
+        <= chemdash.swap.choose_number_of_atoms_to_swap(max_swaps, weightings, rng, 1)
+        <= max_swaps
+    )
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("max_swaps", [
-    (2),
-    (5),
-    (100),
-])
+@pytest.mark.parametrize(
+    "max_swaps",
+    [
+        (2),
+        (5),
+        (100),
+    ],
+)
 def test_choose_number_of_atoms_to_swap2(max_swaps, rng, monkeypatch):
     """
     The "choose_number_of_atoms_to_swap()" routine should choose a number of atoms to swap between 2 and the maximum possible.
@@ -805,7 +1004,7 @@ def test_choose_number_of_atoms_to_swap2(max_swaps, rng, monkeypatch):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 08/09/2017
@@ -814,8 +1013,13 @@ def test_choose_number_of_atoms_to_swap2(max_swaps, rng, monkeypatch):
     def mockreturn(elements):
         return [0] * (elements - 1) + [1]
 
-    monkeypatch.setattr(chemdash.swap, 'generate_linearly_decreasing_weightings', mockreturn)
-    assert chemdash.swap.choose_number_of_atoms_to_swap(max_swaps, "arithmetic", rng, "") == max_swaps
+    monkeypatch.setattr(
+        chemdash.swap, "generate_linearly_decreasing_weightings", mockreturn
+    )
+    assert (
+        chemdash.swap.choose_number_of_atoms_to_swap(max_swaps, "arithmetic", rng, "")
+        == max_swaps
+    )
 
 
 # ===========================================================================================================================================================
@@ -825,9 +1029,18 @@ def test_choose_number_of_atoms_to_swap2(max_swaps, rng, monkeypatch):
         (["Sr", "Ti"], {}, 0, True, 1.0, False),
         (["Sr", "Ti", "O", "O", "X"], {}, 0, True, 1.0, True),
         (["Sr", "Ti", "O", "O", "O", "X", "X", "X", "X", "X"], {}, 0, True, 1.0, True),
-    ])
-def test_swap_atoms(STOX_structure, rng, swap_list, ranking_dict, directed_num_atoms, predefined_vacancies,
-                    vacancy_exclusion_radius, force_vacancy_swaps):
+    ],
+)
+def test_swap_atoms(
+    STOX_structure,
+    rng,
+    swap_list,
+    ranking_dict,
+    directed_num_atoms,
+    predefined_vacancies,
+    vacancy_exclusion_radius,
+    force_vacancy_swaps,
+):
     """
     The "swap_atoms()" routine should change the positions of "num_swaps" atoms from the selection pool.
 
@@ -838,16 +1051,23 @@ def test_swap_atoms(STOX_structure, rng, swap_list, ranking_dict, directed_num_a
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 25/06/2019
     """
 
-    swapped_atoms, swap_text = chemdash.swap.swap_atoms(STOX_structure.atoms.copy(), swap_list, ranking_dict,
-                                                            directed_num_atoms,
-                                                            predefined_vacancies, vacancy_exclusion_radius, rng,
-                                                            force_vacancy_swaps, mag_moms=[])
+    swapped_atoms, swap_text = chemdash.swap.swap_atoms(
+        STOX_structure.atoms.copy(),
+        swap_list,
+        ranking_dict,
+        directed_num_atoms,
+        predefined_vacancies,
+        vacancy_exclusion_radius,
+        rng,
+        force_vacancy_swaps,
+        mag_moms=[],
+    )
 
     # Determine the atoms that were swapped (positions not equal in structures)
     old_elements = STOX_structure.atoms.get_chemical_symbols()
@@ -880,6 +1100,7 @@ def test_swap_atoms(STOX_structure, rng, swap_list, ranking_dict, directed_num_a
 
     assert sorted([entry[0] for entry in reduced_swap_text]) == sorted(swapped_atoms)
     assert sorted([entry[1].tolist() for entry in reduced_swap_text]) == sorted(
-        [swap_pos.tolist() for swap_pos in swapped_positions])
+        [swap_pos.tolist() for swap_pos in swapped_positions]
+    )
     assert sorted([entry[2] for entry in reduced_swap_text]) == sorted(swapped_indices)
     assert sorted([entry[3] for entry in reduced_swap_text]) == sorted(swapped_atoms)

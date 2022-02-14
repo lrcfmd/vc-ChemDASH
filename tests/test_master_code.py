@@ -22,6 +22,7 @@ import ase
 # ===========================================================================================================================================================
 # Fixtures
 
+
 @pytest.fixture
 def structure_count(scope="module"):
     """
@@ -58,44 +59,70 @@ def test_params(scope="module"):
     Paul Sharp 25/06/2019
     """
 
-    return {"calculator": {"value": "gulp", "specified": True},
-            "restart": {"value": "False", "specified": True},
-            "verbosity": {"value": "verbose", "specified": False},
-            "temp": {"value": 0.0, "specified": True},
-            "grid_points": {"value": [8, 8, 8], "specified": True},
-            "gulp_keywords": {"value": "opti pot", "specified": True},
-            "gulp_options": {"value": ["time 5 minutes", "stepmx 0.5"], "specified": True},
-            "vasp_settings": {"value": {"xc": "PBE", "prec": "Normal", "encut": 600},
-                              "specified": True}
-            }
+    return {
+        "calculator": {"value": "gulp", "specified": True},
+        "restart": {"value": "False", "specified": True},
+        "verbosity": {"value": "verbose", "specified": False},
+        "temp": {"value": 0.0, "specified": True},
+        "grid_points": {"value": [8, 8, 8], "specified": True},
+        "gulp_keywords": {"value": "opti pot", "specified": True},
+        "gulp_options": {"value": ["time 5 minutes", "stepmx 0.5"], "specified": True},
+        "vasp_settings": {
+            "value": {"xc": "PBE", "prec": "Normal", "encut": 600},
+            "specified": True,
+        },
+    }
 
 
 # ===========================================================================================================================================================
 # ===========================================================================================================================================================
 # Unit Tests
 
-@pytest.mark.parametrize("expected_output", [
-    ([
-        mock.call('\n'),
-        mock.call('################################################################################\n'),
-        mock.call('#                                   ChemDASH                                   #\n'),
-        mock.call('################################################################################\n'),
-        mock.call('\n'),
-        mock.call(f'Calculation started {datetime.now().strftime("%d/%m/%Y %H:%M")}\n'),
-        mock.call('Summary of Inputs\n'),
-        mock.call('--------------------------------------------------------------------------------\n'),
-        mock.call('calculator                     = gulp\n'),
-        mock.call('grid_points                    = 8, 8, 8\n'),
-        mock.call('gulp_keywords                  = opti pot\n'),
-        mock.call('gulp_options                   = stepmx 0.5, time 5 minutes\n'),
-        mock.call('restart                        = False\n'),
-        mock.call('temp                           = 0.0\n'),
-        mock.call('vasp_settings                  = encut: 600, \n                                 '
-                  'prec: Normal, \n                                 '
-                  'xc: PBE\n'),
-        mock.call('--------------------------------------------------------------------------------\n'),
-        mock.call('\n')])
-])
+
+@pytest.mark.parametrize(
+    "expected_output",
+    [
+        (
+            [
+                mock.call("\n"),
+                mock.call(
+                    "################################################################################\n"
+                ),
+                mock.call(
+                    "#                                   ChemDASH                                   #\n"
+                ),
+                mock.call(
+                    "################################################################################\n"
+                ),
+                mock.call("\n"),
+                mock.call(
+                    f'Calculation started {datetime.now().strftime("%d/%m/%Y %H:%M")}\n'
+                ),
+                mock.call("Summary of Inputs\n"),
+                mock.call(
+                    "--------------------------------------------------------------------------------\n"
+                ),
+                mock.call("calculator                     = gulp\n"),
+                mock.call("grid_points                    = 8, 8, 8\n"),
+                mock.call("gulp_keywords                  = opti pot\n"),
+                mock.call(
+                    "gulp_options                   = stepmx 0.5, time 5 minutes\n"
+                ),
+                mock.call("restart                        = False\n"),
+                mock.call("temp                           = 0.0\n"),
+                mock.call(
+                    "vasp_settings                  = encut: 600, \n                                 "
+                    "prec: Normal, \n                                 "
+                    "xc: PBE\n"
+                ),
+                mock.call(
+                    "--------------------------------------------------------------------------------\n"
+                ),
+                mock.call("\n"),
+            ]
+        )
+    ],
+)
 def test_write_output_file_header(test_params, expected_output, monkeypatch):
     """
     GIVEN a ChemDASH file and set of input parameters
@@ -110,7 +137,7 @@ def test_write_output_file_header(test_params, expected_output, monkeypatch):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 20/01/2020
@@ -120,7 +147,7 @@ def test_write_output_file_header(test_params, expected_output, monkeypatch):
     # Note the lack of lambda -- we want the mock itself, not its return value
     # We pass a blank string for the file argument for this reason
     mock_file = mock.mock_open()
-    monkeypatch.setattr('builtins.open', mock_file)
+    monkeypatch.setattr("builtins.open", mock_file)
 
     file_handle = mock_file()
     chemdash.master_code.write_output_file_header(file_handle, test_params)
@@ -130,11 +157,14 @@ def test_write_output_file_header(test_params, expected_output, monkeypatch):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("test_input, expected_output", [
-    ("OX", "O"),
-    ("X", ""),
-    ("NO", "NO"),
-])
+@pytest.mark.parametrize(
+    "test_input, expected_output",
+    [
+        ("OX", "O"),
+        ("X", ""),
+        ("NO", "NO"),
+    ],
+)
 def test_strip_vacancies(test_input, expected_output):
     """
     The "strip_vacancies()" routine should remove vacancies -- represented as "X" atoms -- from an ase
@@ -147,7 +177,7 @@ def test_strip_vacancies(test_input, expected_output):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 06/07/2017
@@ -161,11 +191,31 @@ def test_strip_vacancies(test_input, expected_output):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("test_list, expected_output", [
-    ([1.0, 2.0, 3.0],
-     [mock.call('0'), mock.call(' 1.00000000'), mock.call(' 2.00000000'), mock.call(' 3.00000000'), mock.call('\n')]),
-    (['a', 'b', 'c'], [mock.call('0'), mock.call(' a'), mock.call(' b'), mock.call(' c'), mock.call('\n')]),
-])
+@pytest.mark.parametrize(
+    "test_list, expected_output",
+    [
+        (
+            [1.0, 2.0, 3.0],
+            [
+                mock.call("0"),
+                mock.call(" 1.00000000"),
+                mock.call(" 2.00000000"),
+                mock.call(" 3.00000000"),
+                mock.call("\n"),
+            ],
+        ),
+        (
+            ["a", "b", "c"],
+            [
+                mock.call("0"),
+                mock.call(" a"),
+                mock.call(" b"),
+                mock.call(" c"),
+                mock.call("\n"),
+            ],
+        ),
+    ],
+)
 def test_output_list(test_list, expected_output, monkeypatch):
     """
     GIVEN a list of floats
@@ -180,7 +230,7 @@ def test_output_list(test_list, expected_output, monkeypatch):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 09/08/2018
@@ -190,7 +240,7 @@ def test_output_list(test_list, expected_output, monkeypatch):
     # Note the lack of lambda -- we want the mock itself, not its return value
     # We pass a blank string for the file argument for this reason
     mock_file = mock.mock_open()
-    monkeypatch.setattr('builtins.open', mock_file)
+    monkeypatch.setattr("builtins.open", mock_file)
 
     file_handle = mock_file()
     chemdash.master_code.output_list(file_handle, "0", test_list)
@@ -200,24 +250,47 @@ def test_output_list(test_list, expected_output, monkeypatch):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("result, expected_output, expected_text", [
-    ("gulp failure",
-     chemdash.master_code.Counts(),
-     [mock.call('GULP has failed to perform the calculation for this structure, so it will be rejected.\n')]),
-    ("timed out",
-     chemdash.master_code.Counts(timed_out=1),
-     [mock.call('The optimisation of this structure has timed out, so it will be rejected.\n')]),
-    ("unconverged",
-     chemdash.master_code.Counts(unconverged=1),
-     [mock.call('The optimisation of this structure has not converged, so it will be rejected.\n')]),
-])
-def test_report_rejected_structures(result, expected_output, expected_text, structure_count, monkeypatch):
+@pytest.mark.parametrize(
+    "result, expected_output, expected_text",
+    [
+        (
+            "gulp failure",
+            chemdash.master_code.Counts(),
+            [
+                mock.call(
+                    "GULP has failed to perform the calculation for this structure, so it will be rejected.\n"
+                )
+            ],
+        ),
+        (
+            "timed out",
+            chemdash.master_code.Counts(timed_out=1),
+            [
+                mock.call(
+                    "The optimisation of this structure has timed out, so it will be rejected.\n"
+                )
+            ],
+        ),
+        (
+            "unconverged",
+            chemdash.master_code.Counts(unconverged=1),
+            [
+                mock.call(
+                    "The optimisation of this structure has not converged, so it will be rejected.\n"
+                )
+            ],
+        ),
+    ],
+)
+def test_report_rejected_structures(
+    result, expected_output, expected_text, structure_count, monkeypatch
+):
     """
     GIVEN a list of floats
 
     WHEN we write the list to a file
 
-    THEN we get a file containig each of the values in the list 
+    THEN we get a file containig each of the values in the list
 
     Parameters
     ----------
@@ -225,7 +298,7 @@ def test_report_rejected_structures(result, expected_output, expected_text, stru
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 09/08/2018
@@ -235,16 +308,18 @@ def test_report_rejected_structures(result, expected_output, expected_text, stru
     # Note the lack of lambda -- we want the mock itself, not its return value
     # We pass a blank string for the file argument for this reason
     mock_file = mock.mock_open()
-    monkeypatch.setattr('builtins.open', mock_file)
+    monkeypatch.setattr("builtins.open", mock_file)
 
     file_handle = mock_file()
-    updated_structure_count = chemdash.master_code.report_rejected_structure(file_handle, result, "gulp",
-                                                                             structure_count)
+    updated_structure_count = chemdash.master_code.report_rejected_structure(
+        file_handle, result, "gulp", structure_count
+    )
 
     # We check the calls to the write function as we do not return what we write
     assert file_handle.write.call_args_list == expected_text
 
     # assert updated_structure_count == expected_output
+
 
 # TODO: write a test that tests if the magnetic structure stays constant over many vasp caclualtions when a
 #  restart file is used

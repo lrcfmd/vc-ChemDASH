@@ -16,25 +16,64 @@ import time
 # ===========================================================================================================================================================
 # Tests
 
+
 @pytest.mark.parametrize(
-    "structure, num_calcs, main_settings, additional_settings, max_convergence_calcs, expected_output", [
-        (chemdash.master_code.Structure(index=0, atoms=
-        ase.Atoms(symbols="SrTiO3", cell=[2.0, 2.0, 2.0],
-                  charges=[2.0, 4.0, -2.0, -2.0, -2.0],
-                  scaled_positions=(
-                  [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5]),
-                  pbc=[True, True, True])),
-         2, {}, [{}, {}], 1,
-         (chemdash.master_code.Structure(index=0, atoms=
-         ase.Atoms(symbols="SrTiO3", cell=[2.0, 2.0, 2.0],
-                   charges=[2.0, 4.0, -2.0, -2.0, -2.0],
-                   scaled_positions=(
-                   [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5]),
-                   pbc=[True, True, True])), "unconverged", 0.0))
-    ])
+    "structure, num_calcs, main_settings, additional_settings, max_convergence_calcs, expected_output",
+    [
+        (
+            chemdash.master_code.Structure(
+                index=0,
+                atoms=ase.Atoms(
+                    symbols="SrTiO3",
+                    cell=[2.0, 2.0, 2.0],
+                    charges=[2.0, 4.0, -2.0, -2.0, -2.0],
+                    scaled_positions=(
+                        [0.75, 0.75, 0.25],
+                        [0.75, 0.25, 0.25],
+                        [0.5, 0.5, 0.5],
+                        [0.5, 0.0, 0.0],
+                        [0.0, 0.0, 0.5],
+                    ),
+                    pbc=[True, True, True],
+                ),
+            ),
+            2,
+            {},
+            [{}, {}],
+            1,
+            (
+                chemdash.master_code.Structure(
+                    index=0,
+                    atoms=ase.Atoms(
+                        symbols="SrTiO3",
+                        cell=[2.0, 2.0, 2.0],
+                        charges=[2.0, 4.0, -2.0, -2.0, -2.0],
+                        scaled_positions=(
+                            [0.75, 0.75, 0.25],
+                            [0.75, 0.25, 0.25],
+                            [0.5, 0.5, 0.5],
+                            [0.5, 0.0, 0.0],
+                            [0.0, 0.0, 0.5],
+                        ),
+                        pbc=[True, True, True],
+                    ),
+                ),
+                "unconverged",
+                0.0,
+            ),
+        )
+    ],
+)
 @pytest.mark.xfail
-def test_multi_stage_vasp_calc(structure, num_calcs, main_settings, additional_settings, max_convergence_calcs,
-                               expected_output, monkeypatch):
+def test_multi_stage_vasp_calc(
+    structure,
+    num_calcs,
+    main_settings,
+    additional_settings,
+    max_convergence_calcs,
+    expected_output,
+    monkeypatch,
+):
     """
     GIVEN a structure and set of vasp settings
 
@@ -62,33 +101,67 @@ def test_multi_stage_vasp_calc(structure, num_calcs, main_settings, additional_s
     """
 
     # Need to patch all file operations -- we don't want to perform any during tests
-    monkeypatch.setattr(os, 'remove', lambda x: None)
-    monkeypatch.setattr(shutil, 'copy2', lambda x, y: None)
-    monkeypatch.setattr(shutil, 'copyfileobj', lambda x, y: None)
-    monkeypatch.setattr('builtins.open', mock.mock_open())
+    monkeypatch.setattr(os, "remove", lambda x: None)
+    monkeypatch.setattr(shutil, "copy2", lambda x, y: None)
+    monkeypatch.setattr(shutil, "copyfileobj", lambda x, y: None)
+    monkeypatch.setattr("builtins.open", mock.mock_open())
 
     # Patch the "run_vasp()" routine in order to control the output
-    mock_run = mock.MagicMock(side_effect=
-                              [(ase.Atoms(symbols="SrTiO3",
-                                          cell=[2.0, 2.0, 2.0], charges=[2.0, 4.0, -2.0, -2.0, -2.0],
-                                          scaled_positions=(
-                                          [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0],
-                                          [0.0, 0.0, 0.5]),
-                                          pbc=[True, True, True]), 0.0, ""),
-                               (ase.Atoms(symbols="SrTiO3",
-                                          cell=[2.0, 2.0, 2.0], charges=[2.0, 4.0, -2.0, -2.0, -2.0],
-                                          scaled_positions=(
-                                          [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0],
-                                          [0.0, 0.0, 0.5]),
-                                          pbc=[True, True, True]), 10.0, "")])
+    mock_run = mock.MagicMock(
+        side_effect=[
+            (
+                ase.Atoms(
+                    symbols="SrTiO3",
+                    cell=[2.0, 2.0, 2.0],
+                    charges=[2.0, 4.0, -2.0, -2.0, -2.0],
+                    scaled_positions=(
+                        [0.75, 0.75, 0.25],
+                        [0.75, 0.25, 0.25],
+                        [0.5, 0.5, 0.5],
+                        [0.5, 0.0, 0.0],
+                        [0.0, 0.0, 0.5],
+                    ),
+                    pbc=[True, True, True],
+                ),
+                0.0,
+                "",
+            ),
+            (
+                ase.Atoms(
+                    symbols="SrTiO3",
+                    cell=[2.0, 2.0, 2.0],
+                    charges=[2.0, 4.0, -2.0, -2.0, -2.0],
+                    scaled_positions=(
+                        [0.75, 0.75, 0.25],
+                        [0.75, 0.25, 0.25],
+                        [0.5, 0.5, 0.5],
+                        [0.5, 0.0, 0.0],
+                        [0.0, 0.0, 0.5],
+                    ),
+                    pbc=[True, True, True],
+                ),
+                10.0,
+                "",
+            ),
+        ]
+    )
 
-    monkeypatch.setattr(chemdash.vasp_calc, 'run_vasp', lambda x1, x2: mock_run())
+    monkeypatch.setattr(chemdash.vasp_calc, "run_vasp", lambda x1, x2: mock_run())
 
     # Patch the vasp_time -- not predictable during test
-    monkeypatch.setattr(time, 'time', lambda: 0.0)
+    monkeypatch.setattr(time, "time", lambda: 0.0)
 
-    assert chemdash.vasp_calc.multi_stage_vasp_calc(structure, num_calcs, "", main_settings, additional_settings,
-                                                    max_convergence_calcs) == expected_output
+    assert (
+        chemdash.vasp_calc.multi_stage_vasp_calc(
+            structure,
+            num_calcs,
+            "",
+            main_settings,
+            additional_settings,
+            max_convergence_calcs,
+        )
+        == expected_output
+    )
 
 
 # NEED TO CAREFULLY CONSIDER THE TESTS THAT WE NEED FOR THIS ROUTINE -- MAY BE A LARGE NUMBER.
@@ -99,19 +172,44 @@ def test_multi_stage_vasp_calc(structure, num_calcs, main_settings, additional_s
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("structure, vasp_settings, expected_output", [
-    (ase.Atoms(symbols="SrTiO3", cell=[2.0, 2.0, 2.0],
-               scaled_positions=(
-               [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5]),
-               calculator=None,
-               pbc=[True, True, True]), {'ibrion': 1},
-     (ase.Atoms(symbols="SrTiO3", cell=[2.0, 2.0, 2.0],
+@pytest.mark.parametrize(
+    "structure, vasp_settings, expected_output",
+    [
+        (
+            ase.Atoms(
+                symbols="SrTiO3",
+                cell=[2.0, 2.0, 2.0],
                 scaled_positions=(
-                [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5]),
-                calculator=ase.calculators.vasp.Vasp(),
-                pbc=[True, True, True]),
-      1.0, ""))
-])
+                    [0.75, 0.75, 0.25],
+                    [0.75, 0.25, 0.25],
+                    [0.5, 0.5, 0.5],
+                    [0.5, 0.0, 0.0],
+                    [0.0, 0.0, 0.5],
+                ),
+                calculator=None,
+                pbc=[True, True, True],
+            ),
+            {"ibrion": 1},
+            (
+                ase.Atoms(
+                    symbols="SrTiO3",
+                    cell=[2.0, 2.0, 2.0],
+                    scaled_positions=(
+                        [0.75, 0.75, 0.25],
+                        [0.75, 0.25, 0.25],
+                        [0.5, 0.5, 0.5],
+                        [0.5, 0.0, 0.0],
+                        [0.0, 0.0, 0.5],
+                    ),
+                    calculator=ase.calculators.vasp.Vasp(),
+                    pbc=[True, True, True],
+                ),
+                1.0,
+                "",
+            ),
+        )
+    ],
+)
 def test_run_vasp(structure, vasp_settings, expected_output, monkeypatch):
     """
     GIVEN a structure and set of vasp settings
@@ -131,9 +229,11 @@ def test_run_vasp(structure, vasp_settings, expected_output, monkeypatch):
     Paul Sharp 27/06/2019
     """
 
-    monkeypatch.setattr(structure, 'get_potential_energy', lambda: 1.0)
+    monkeypatch.setattr(structure, "get_potential_energy", lambda: 1.0)
 
-    final_structure, energy, result = chemdash.vasp_calc.run_vasp(structure, vasp_settings)
+    final_structure, energy, result = chemdash.vasp_calc.run_vasp(
+        structure, vasp_settings
+    )
 
     # Class definition is that two ase Atoms objects are the same if they have the same atoms, unit cell,
     # positions and boundary conditions.
@@ -143,19 +243,44 @@ def test_run_vasp(structure, vasp_settings, expected_output, monkeypatch):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("structure, vasp_settings, expected_output", [
-    (ase.Atoms(symbols="SrTiO3", cell=[2.0, 2.0, 2.0],
-               scaled_positions=(
-               [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5]),
-               calculator=None,
-               pbc=[True, True, True]), {'ibrion': 1},
-     (ase.Atoms(symbols="SrTiO3", cell=[2.0, 2.0, 2.0],
+@pytest.mark.parametrize(
+    "structure, vasp_settings, expected_output",
+    [
+        (
+            ase.Atoms(
+                symbols="SrTiO3",
+                cell=[2.0, 2.0, 2.0],
                 scaled_positions=(
-                [0.75, 0.75, 0.25], [0.75, 0.25, 0.25], [0.5, 0.5, 0.5], [0.5, 0.0, 0.0], [0.0, 0.0, 0.5]),
-                calculator=ase.calculators.vasp.Vasp(),
-                pbc=[True, True, True]),
-      0.0, "vasp failure"))
-])
+                    [0.75, 0.75, 0.25],
+                    [0.75, 0.25, 0.25],
+                    [0.5, 0.5, 0.5],
+                    [0.5, 0.0, 0.0],
+                    [0.0, 0.0, 0.5],
+                ),
+                calculator=None,
+                pbc=[True, True, True],
+            ),
+            {"ibrion": 1},
+            (
+                ase.Atoms(
+                    symbols="SrTiO3",
+                    cell=[2.0, 2.0, 2.0],
+                    scaled_positions=(
+                        [0.75, 0.75, 0.25],
+                        [0.75, 0.25, 0.25],
+                        [0.5, 0.5, 0.5],
+                        [0.5, 0.0, 0.0],
+                        [0.0, 0.0, 0.5],
+                    ),
+                    calculator=ase.calculators.vasp.Vasp(),
+                    pbc=[True, True, True],
+                ),
+                0.0,
+                "vasp failure",
+            ),
+        )
+    ],
+)
 def test_run_vasp_exception(structure, vasp_settings, expected_output, monkeypatch):
     """
     GIVEN a structure and set of vasp settings
@@ -178,17 +303,32 @@ def test_run_vasp_exception(structure, vasp_settings, expected_output, monkeypat
     # We patch the calls to "structure.get_potential_energy()" in order to raise the exception.
     mock_exception = mock.MagicMock(side_effect=(AssertionError))
 
-    monkeypatch.setattr(structure, 'get_potential_energy', lambda: mock_exception())
+    monkeypatch.setattr(structure, "get_potential_energy", lambda: mock_exception())
 
     assert chemdash.vasp_calc.run_vasp(structure, vasp_settings) == expected_output
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("executable, num_cores, vasp_pseudopotentials, expected_output", [
-    ("/home/vasp", 2, "/home/bin/", [mock.call("import os\nexitcode = os.system('mpirun -np 2 /home/vasp')")]),
-    ("/home/vasp", 1, "/home/bin/", [mock.call("import os\nexitcode = os.system('/home/vasp')")]),
-])
-def test_set_vasp_script(executable, num_cores, vasp_pseudopotentials, expected_output, monkeypatch):
+@pytest.mark.parametrize(
+    "executable, num_cores, vasp_pseudopotentials, expected_output",
+    [
+        (
+            "/home/vasp",
+            2,
+            "/home/bin/",
+            [mock.call("import os\nexitcode = os.system('mpirun -np 2 /home/vasp')")],
+        ),
+        (
+            "/home/vasp",
+            1,
+            "/home/bin/",
+            [mock.call("import os\nexitcode = os.system('/home/vasp')")],
+        ),
+    ],
+)
+def test_set_vasp_script(
+    executable, num_cores, vasp_pseudopotentials, expected_output, monkeypatch
+):
     """
     GIVEN a structure and set of vasp settings
 
@@ -214,9 +354,11 @@ def test_set_vasp_script(executable, num_cores, vasp_pseudopotentials, expected_
     # We need to ensure we use "mock_open" to avoid writing to a file
     # Note the lack of lambda -- we want the mock itself, not its return value
     mock_file = mock.mock_open()
-    monkeypatch.setattr('builtins.open', mock_file)
+    monkeypatch.setattr("builtins.open", mock_file)
 
-    chemdash.vasp_calc.set_vasp_script(vasp_script, executable, num_cores, vasp_pseudopotentials)
+    chemdash.vasp_calc.set_vasp_script(
+        vasp_script, executable, num_cores, vasp_pseudopotentials
+    )
 
     # We check the calls to the write function as we do not return what we write
     assert mock_file().write.call_args_list == expected_output
@@ -226,16 +368,19 @@ def test_set_vasp_script(executable, num_cores, vasp_pseudopotentials, expected_
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("value, expected_output", [
-    (1.0, True),
-    (0.0, True),
-    (-1.0, True),
-    ("1.0", True),
-    ("0.0", True),
-    ("-1.0", True),
-    ("str", False),
-    ("***", False),
-])
+@pytest.mark.parametrize(
+    "value, expected_output",
+    [
+        (1.0, True),
+        (0.0, True),
+        (-1.0, True),
+        ("1.0", True),
+        ("0.0", True),
+        ("-1.0", True),
+        ("str", False),
+        ("***", False),
+    ],
+)
 def test_check_float(value, expected_output):
     """
     GIVEN an input value.
@@ -258,25 +403,41 @@ def test_check_float(value, expected_output):
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("test_outcar, expected_output", [
-    ('''------------------------ aborting loop because EDIFF is reached ----------------------------------------
-    reached required accuracy - stopping structural energy minimisation''', True),
-
-    ('''reached required accuracy - stopping structural energy minimisation
+@pytest.mark.parametrize(
+    "test_outcar, expected_output",
+    [
+        (
+            """------------------------ aborting loop because EDIFF is reached ----------------------------------------
+    reached required accuracy - stopping structural energy minimisation""",
+            True,
+        ),
+        (
+            """reached required accuracy - stopping structural energy minimisation
     ------------------------ aborting loop because EDIFF is reached ----------------------------------------
-    reached required accuracy - stopping structural energy minimisation''', True),
-
-    ('''------------------------ aborting loop because EDIFF is reached ----------------------------------------
+    reached required accuracy - stopping structural energy minimisation""",
+            True,
+        ),
+        (
+            """------------------------ aborting loop because EDIFF is reached ----------------------------------------
     ------------------------ aborting loop because EDIFF is reached ----------------------------------------
-    reached required accuracy - stopping structural energy minimisation''', False),
-
-    ('''------------------------ aborting loop because EDIFF is reached ----------------------------------------
-    ------------------------ aborting loop because EDIFF is reached ----------------------------------------''', False),
-    (
-            '''reached required accuracy - stopping structural energy minimisation''', False),
-    ('''------------------------ aborting loop because EDIFF is reached ----------------------------------------''',
-     False),
-])
+    reached required accuracy - stopping structural energy minimisation""",
+            False,
+        ),
+        (
+            """------------------------ aborting loop because EDIFF is reached ----------------------------------------
+    ------------------------ aborting loop because EDIFF is reached ----------------------------------------""",
+            False,
+        ),
+        (
+            """reached required accuracy - stopping structural energy minimisation""",
+            False,
+        ),
+        (
+            """------------------------ aborting loop because EDIFF is reached ----------------------------------------""",
+            False,
+        ),
+    ],
+)
 def test_converged_in_one_scf_cycle(test_outcar, expected_output, monkeypatch):
     """
     GIVEN an OUTCAR file
@@ -299,22 +460,31 @@ def test_converged_in_one_scf_cycle(test_outcar, expected_output, monkeypatch):
     # We also need to ensure that the return value of this Mock produces an iterable,
     # so we can loop over the lines of the file
     iterable_mock_file = mock.mock_open(read_data=test_outcar)
-    iterable_mock_file.return_value.__iter__ = lambda x: iter(x.readline, '')
+    iterable_mock_file.return_value.__iter__ = lambda x: iter(x.readline, "")
 
     # Note the lack of lambda -- we want the mock itself, not its return value
     # We pass a blank string for the file argument for this reason
-    monkeypatch.setattr('builtins.open', iterable_mock_file)
+    monkeypatch.setattr("builtins.open", iterable_mock_file)
 
     assert chemdash.vasp_calc.converged_in_one_scf_cycle("") == expected_output
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("expected_output", [
-    ([0.0, 0.0, 0.0], [0.25, 0.25, 0.25], [0.75, 0.75, 0.75], [0.0, 0.5, 0.0], [0.25, 0.25, 0.75]),
-])
+@pytest.mark.parametrize(
+    "expected_output",
+    [
+        (
+            [0.0, 0.0, 0.0],
+            [0.25, 0.25, 0.25],
+            [0.75, 0.75, 0.75],
+            [0.0, 0.5, 0.0],
+            [0.25, 0.25, 0.75],
+        ),
+    ],
+)
 def test_determine_vacancy_positions(STOX_structure, expected_output):
     """
-    GIVEN an atoms object 
+    GIVEN an atoms object
 
     WHEN we look for the positions of vacancies
 
@@ -328,14 +498,32 @@ def test_determine_vacancy_positions(STOX_structure, expected_output):
     Paul Sharp 27/06/2019
     """
 
-    assert all([np.allclose(x, y) for x, y in
-                zip(chemdash.vasp_calc.determine_vacancy_positions(STOX_structure), expected_output)])
+    assert all(
+        [
+            np.allclose(x, y)
+            for x, y in zip(
+                chemdash.vasp_calc.determine_vacancy_positions(STOX_structure),
+                expected_output,
+            )
+        ]
+    )
 
 
 # ===========================================================================================================================================================
-@pytest.mark.parametrize("vacancy_points", [
-    ([[0.0, 0.0, 0.0], [0.25, 0.25, 0.25], [0.75, 0.75, 0.75], [0.0, 0.5, 0.0], [0.25, 0.25, 0.75]]),
-])
+@pytest.mark.parametrize(
+    "vacancy_points",
+    [
+        (
+            [
+                [0.0, 0.0, 0.0],
+                [0.25, 0.25, 0.25],
+                [0.75, 0.75, 0.75],
+                [0.0, 0.5, 0.0],
+                [0.25, 0.25, 0.75],
+            ]
+        ),
+    ],
+)
 def test_populate_points_with_vacancies(STO_atoms, vacancy_points, STOX_structure):
     """
     GIVEN an atoms object and a list of points
@@ -355,4 +543,7 @@ def test_populate_points_with_vacancies(STO_atoms, vacancy_points, STOX_structur
     Paul Sharp 26/10/2017
     """
 
-    assert chemdash.vasp_calc.populate_points_with_vacancies(STO_atoms, vacancy_points) == STOX_structure
+    assert (
+        chemdash.vasp_calc.populate_points_with_vacancies(STO_atoms, vacancy_points)
+        == STOX_structure
+    )

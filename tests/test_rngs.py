@@ -6,9 +6,9 @@ from builtins import range
 
 import numpy as np
 
-#===========================================================================================================================================================
-#===========================================================================================================================================================
-#Tests
+# ===========================================================================================================================================================
+# ===========================================================================================================================================================
+# Tests
 
 
 def test_NR_Ran_int_64_bit(rng):
@@ -22,7 +22,7 @@ def test_NR_Ran_int_64_bit(rng):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 16/01/2020
@@ -34,12 +34,12 @@ def test_NR_Ran_int_64_bit(rng):
         ran_vals.append(rng.int_64_bit())
 
     assert min(ran_vals) >= 0.0
-    assert max(ran_vals) <= 2**64
+    assert max(ran_vals) <= 2 ** 64
 
     assert all(type(item) is int for item in ran_vals)
 
 
-#===========================================================================================================================================================
+# ===========================================================================================================================================================
 def test_NR_Ran_int_32_bit(rng):
     """
     The "int_32_bit()" routine should generate a random 32-bit integer.
@@ -51,7 +51,7 @@ def test_NR_Ran_int_32_bit(rng):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 14/07/2017
@@ -63,12 +63,12 @@ def test_NR_Ran_int_32_bit(rng):
         ran_vals.append(rng.int_32_bit())
 
     assert min(ran_vals) >= 0.0
-    assert max(ran_vals) <= 2**32
+    assert max(ran_vals) <= 2 ** 32
 
     assert all(type(item) is np.uint32 for item in ran_vals)
 
 
-#===========================================================================================================================================================
+# ===========================================================================================================================================================
 def test_real(rng):
     """
     The "real()" routine should generate a random floating point between 0.0 and 1.0.
@@ -80,7 +80,7 @@ def test_real(rng):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 14/07/2017
@@ -97,14 +97,8 @@ def test_real(rng):
     assert all(type(item) is float for item in ran_vals)
 
 
-#===========================================================================================================================================================
-@pytest.mark.parametrize("l_lim, u_lim", [
-    (0.0, 1.0),
-    (5.0, 10.0),
-    (-5.0, 0.0)
-])
-
-
+# ===========================================================================================================================================================
+@pytest.mark.parametrize("l_lim, u_lim", [(0.0, 1.0), (5.0, 10.0), (-5.0, 0.0)])
 def test_real_range(rng, l_lim, u_lim):
     """
     The "real_range()" routine should generate a random floating point in the range [l_lim, u_lim].
@@ -116,7 +110,7 @@ def test_real_range(rng, l_lim, u_lim):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 14/07/2017
@@ -133,14 +127,8 @@ def test_real_range(rng, l_lim, u_lim):
     assert all(type(item) is float for item in ran_vals)
 
 
-#===========================================================================================================================================================
-@pytest.mark.parametrize("l_lim, u_lim", [
-    (0, 1),
-    (5, 10),
-    (-5, 0)
-])
-
-
+# ===========================================================================================================================================================
+@pytest.mark.parametrize("l_lim, u_lim", [(0, 1), (5, 10), (-5, 0)])
 def test_real_range(rng, l_lim, u_lim):
     """
     The "int_range()" routine should generate a random integer in the range [l_lim, u_lim].
@@ -152,7 +140,7 @@ def test_real_range(rng, l_lim, u_lim):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 14/07/2017
@@ -169,7 +157,7 @@ def test_real_range(rng, l_lim, u_lim):
     assert all(type(item) is float for item in ran_vals)
 
 
-#===========================================================================================================================================================
+# ===========================================================================================================================================================
 def test_point_3D(rng):
     """
     The "point_3D()" routine should generate a random cartesian coordinate for a point in 3D space with each coordinate between 0 and 1.
@@ -181,7 +169,7 @@ def test_point_3D(rng):
 
     Returns
     -------
-    None  
+    None
 
     ---------------------------------------------------------------------------
     Paul Sharp 16/01/2020
@@ -192,7 +180,7 @@ def test_point_3D(rng):
 
         ran_vals.append(rng.point_3D())
 
-    assert [len(coordinate)==3 for coordinate in ran_vals]
+    assert [len(coordinate) == 3 for coordinate in ran_vals]
 
     assert [0.0 <= point <= 1.0 for coordinate in ran_vals for point in coordinate]
 
