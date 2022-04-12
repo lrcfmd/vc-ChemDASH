@@ -592,7 +592,7 @@ def initialise_default_params(calc_name):
             "description": "If true, swap atoms based on relaxed structures, rather than initial structures. Default: True.",
         },
         "vacancy_grid": {
-            "value": "True",
+            "value": "False",
             "specified": False,
             "type": "boolean",
             "description": "If true, apply vacancy grids to each structure in which we will swap atoms. Default: True.",

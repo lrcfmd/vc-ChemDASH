@@ -43,9 +43,9 @@ ChemDASH can also be run directly in python after instantiating a ChemDASH class
 
 Running ChemDASH in a python script allows for more complex pre-processing and post-processing of a ChemDASH run. 
 
-The output of the calculation is written to the file “`<basename>`.chemdash”.
+The output of the calculation is written to the file “\<basename>.chemdash”.
 If there are errors in either the “.atoms” or the “.input” files, then the
-calculation is stopped, with errors listed in the file “`<basename>`.error”.
+calculation is stopped, with errors listed in the file “\<basename>.error”.
 To restart a ChemDASH run, with a restart file present, run with
 “restart=True” in the input file.\
 \
